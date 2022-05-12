@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.praver.sm.mapper.StudentMapper">
+
+    <resultMap id="studentInfo" type="student">
+        <result property="id" column="sid"/>
+        <result property="name" column="sname"/>
+        <result property="username" column="susername"/>
+        <result property="password" column="spassword"/>
+        <result property="sex" column="ssex"/>
+        <result property="userType" column="userType"/>
+        <result property="remark" column="sremark"/>
+        <association property="classes" javaType="Classes">
+            <result property="id" column="cid"/>
+            <result property="name" column="cname"/>
+        </association>
+        <association property="teacher" javaType="Teacher">
+            <result property="id" column="tid"/>
+            <result property="name" column="tname"/>
+        </association>
+    </resultMap>
+
+
+    <update id="updateStudent" parameterType="map">
+        update stu_inf.student
+        <set>
+            <if test="classId != null and classId != ''">classId = #{classId},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="sex != null and    sex != ''">sex = #{sex},</if>
+            <if test="tid != null and tid != ''">tid = #{tid},</if>
+            <if test="remark != null and remark != ''">remark = #{remark}</if>
+        </set>
+        where id = #{id};
+    </update>
+
+    <select id="getStudent" resultMap="studentInfo">
+        select s.id        sid,
+               s.name      sname,
+               s.username  susername,
+               s.password  spassword,
+               s.user_type userType,
+               s.sex       ssex,
+               s.remark    sremark,
+               c.id        cid,
+               c.name      cname,
+               t.id as     tid,
+               t.name      tname
+        from stu_inf.student s,
+             stu_inf.classes c,
+             stu_inf.teacher t
+        where classId = c.id
+          and tid = t.id;
+    </select>
+
+    <insert id="addStudent" parameterType="map">
+        insert into stu_inf.student(classId, name, username, password, sex, tid, remark, user_type)
+            VALUE (#{classId}, #{name}, #{username}, #{password}, #{sex}, #{tid}, #{remark}, 3);
+    </insert>
+
+    <delete id="deleteStudent" parameterType="int">
+        delete
+        from stu_inf.student
+        where id = #{id};
+    </delete>
+
+
+    <select id="queryStudentByName" resultMap="studentInfo">
+        select s.id sid, s.name sname,s.username susername,s.password spassword,s.user_type userType, s.sex
+        ssex,s.remark sremark,
+        c.id cid,c.name cname,t.id tid,t.name tname
+        from stu_inf.student s, stu_inf.classes c,stu_inf.teacher t
+        <where>
+            <if test="true">classId=c.id and tid = t.id</if>
+            <if test="classId != null and classId != ''">and classId = #{classId}</if>
+            <if test=" name != null and name != '' ">and s.name like '%' #{name} '%'</if>
+        </where>
+    </select>
+
+    <select id="queryStudentById" resultMap="studentInfo">
+        select s.id        sid,
+               s.name      sname,
+               s.username  susername,
+               s.password  spassword,
+               s.user_type userType,
+               s.sex       ssex,
+               s.remark    sremark,
+               c.id        cid,
+               c.name      cname,
+               t.id as     tid,
+               t.name      tname
+        from stu_inf.student s,
+             stu_inf.classes c,
+             stu_inf.teacher t
+        where classId = c.id
+          and tid = t.id
+          and s.id = #{id};
+    </select>
+</mapper>

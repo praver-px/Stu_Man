@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.praver.sm.mapper.TeacherMapper">
+    <select id="getTeacher" resultMap="teacherGrade">
+        select t.id tid,t.name tname,t.sex,t.username,t.password,t.mobile,t.remark,t.user_type,
+               g.name gname
+        from stu_inf.teacher t,stu_inf.grade g
+        where t.gradeid = g.id;
+    </select>
+
+    <resultMap id="teacherGrade" type="Teacher">
+        <result property="id" column="tid"/>
+        <result property="name" column="tname"/>
+        <result property="sex" column="sex"/>
+        <result property="userType" column="user_type"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="mobile" column="mobile"/>
+        <result property="remark" column="remark"/>
+        <association property="grade" javaType="Grade">
+            <result property="id" column="gid"/>
+            <result property="name" column="gname"/>
+            <result property="remark" column="gremark"/>
+        </association>
+    </resultMap>
+
+
+    <insert id="addTeacher" parameterType="map">
+        insert into stu_inf.teacher(name, sex, username, password, mobile, remark, user_type, gradeid)
+        values (#{name},#{sex},#{username},#{password},#{mobile},#{remark},2,#{gradeid})
+    </insert>
+
+    <delete id="deleteTeacher" parameterType="int">
+        delete from stu_inf.teacher where id=#{id};
+    </delete>
+
+    <select id="queryTeacherById" parameterType="int" resultMap="teacherGrade">
+        select t.id  tid,t.name tname,t.sex,t.username,t.password,t.mobile,t.remark,t.user_type,
+               g.name gname
+        from stu_inf.teacher t,stu_inf.grade g
+        where t.id=g.id and t.id=#{id}
+    </select>
+
+    <update id="updateTeacher" parameterType="map">
+        update stu_inf.teacher
+        <set>
+            <if test="name != null and name != ''">name=#{name},</if>
+            <if test="sex != null and sex != ''">sex=#{sex},</if>
+            <if test="username != null and username != ''">username=#{username},</if>
+            <if test="password != null and password != ''">password=#{password},</if>
+            <if test="mobile != null and mobile != ''">mobile=#{mobile},</if>
+            <if test="gradeid != null and gradeid != ''">gradeid=#{gradeid},</if>
+            <if test="remark != null and remark != ''">remark=#{remark}</if>
+        </set>
+        where id=#{id};
+    </update>
+
+    <select id="queryTeacherByName" resultMap="teacherGrade">
+        select t.id tid,t.name tname,t.sex,t.username,t.password,t.mobile,t.remark,t.user_type,
+        g.id gid,g.name gname,g.remark gremark
+        from stu_inf.teacher t,stu_inf.grade g
+        <where>
+            <if test="true">t.gradeid = g.id</if>
+            <if test="id != null and id != '' ">and gradeid = #{id}</if>
+            <if test="name != null and name != '' ">and t.name like '%' #{name} '%'</if>
+        </where>
+    </select>
+
+    <select id="loginTeacher" parameterType="loginForm" resultType="teacher" >
+        select id,name,sex,username,password,mobile,remark,user_type userType
+        from stu_inf.teacher
+        where username=#{username} and password=#{password};
+    </select>
+</mapper>

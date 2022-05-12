@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.praver.sm.mapper.ClassesMapper">
+
+    <select id="getClasses" resultMap="classesGrade">
+        select c.id cid,c.name cname,c.remark cremark,g.id gid, g.name gname,g.remark gremark
+        from stu_inf.classes c, stu_inf.grade g
+        where gradeid = g.id;
+    </select>
+
+    <resultMap id="classesGrade" type="classes">
+        <result property="id" column="cid"/>
+        <result property="name" column="cname"/>
+        <result property="remark" column="cremark"/>
+        <association property="grade" javaType="Grade">
+            <result property="id" column="gid"/>
+            <result property="name" column="gname"/>
+            <result property="remark" column="gremark"/>
+        </association>
+    </resultMap>
+
+    <insert id="addClasses" parameterType="map">
+        insert into stu_inf.classes(gradeid, name, remark)
+        values (#{gradeid}, #{name}, #{remark});
+    </insert>
+
+    <delete id="deleteClasses" parameterType="int">
+        delete from stu_inf.classes where id=#{id};
+    </delete>
+
+    <select id="queryClassesByName" resultMap="classesGrade">
+        select c.id cid,c.name cname,c.remark cremark,g.id gid, g.name gname,g.remark gremark
+        from stu_inf.classes c, stu_inf.grade g
+        <where>
+            <if test="true">gradeid = g.id</if>
+            <if test="id != null and id != '' ">and gradeid = #{id}</if>
+            <if test="name != null and name != '' ">and c.name like '%' #{name} '%'</if>
+        </where>
+    </select>
+
+    <select id="queryClassesById" resultMap="classesGrade">
+        select c.id cid,c.name cname,c.remark cremark,g.id gid, g.name gname,g.remark gremark
+        from stu_inf.classes c, stu_inf.grade g
+        where c.id=#{id};
+    </select>
+
+    <update id="updateClasses" parameterType="map">
+        update stu_inf.classes
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gradeid != null and gradeid != ''">gradeid = #{gradeid},</if>
+            <if test="remark != null and remark != ''">remark = #{remark}</if>
+        </set>
+        where id=#{id};
+    </update>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.praver.sm.mapper.GradeMapper">
+
+    <insert id="addGrade" parameterType="grade">
+        insert into stu_inf.grade(name, remark)
+        values (#{name},#{remark});
+    </insert>
+
+    <delete id="deleteGrade" parameterType="int" >
+        delete
+        from stu_inf.grade
+        where id=#{id};
+    </delete>
+
+    <select id="queryGrade" parameterType="int" resultType="grade">
+        select *
+        from stu_inf.grade
+        where id=#{id};
+    </select>
+
+    <update id="updateGrade" parameterType="grade">
+        update stu_inf.grade
+        <set>
+            <if test="name != null and name != ''">name=#{name},</if>
+            <if test="remark != null and remark != ''">remark=#{remark}</if>
+        </set>
+        where id=#{id};
+    </update>
+
+    <select id="queryGradeList" resultType="grade">
+        select *
+        from stu_inf.grade;
+    </select>
+
+    <select id="queryGradeByName" resultType="grade">
+        select *
+        from stu_inf.grade
+        where name like '%' #{name} '%';
+    </select>
+
+</mapper>

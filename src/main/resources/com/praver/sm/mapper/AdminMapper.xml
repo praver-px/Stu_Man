@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.praver.sm.mapper.AdminMapper">
+
+    <select id="loginAdmin" parameterType="loginForm" resultType="admin">
+        select *
+        from stu_inf.admin
+        where username=#{username} and password=#{password};
+    </select>
+
+    <insert id="addAdmin" parameterType="admin">
+        insert into stu_inf.admin (username, password, user_type, name)
+        values (#{username},#{password},#{name},1);
+    </insert>
+
+    <delete id="deleteAdmin" parameterType="int">
+        delete
+        from stu_inf.admin
+        where id=#{id};
+    </delete>
+
+    <update id="updateAdmin" parameterType="admin">
+        update stu_inf.admin
+        <set>
+            <if test="username!= null and username != ''">username=#{username},</if>
+            <if test="password!= null and password != ''">password=#{password},</if>
+            <if test="name!= null and name != ''">name=#{name}</if>
+        </set>
+        where id=#{id};
+    </update>
+
+    <select id="queryAdmin" parameterType="int" resultType="admin">
+        select *
+        from stu_inf.admin
+        where id=#{id}
+    </select>
+
+</mapper>
